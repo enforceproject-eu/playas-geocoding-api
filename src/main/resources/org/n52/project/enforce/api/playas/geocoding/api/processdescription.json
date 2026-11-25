@@ -1,0 +1,42 @@
+{
+	"id": "geocode-playas",
+	"title": "Playas of Barcelona geocoding process",
+	"description": "Adds missing and fixes incorrect location information for data coming from the Manorba App used to report beach cleaning around Barcelona.",
+	"version": "1.0.0",
+	"jobControlOptions": [
+		"sync-execute"
+	],
+	"inputs": {
+		"playasInput": {
+			"title": "Inline Table Value Input",
+			"description": "Base64-encoded input table.",
+			"minOccurs": 1,
+			"maxOccurs": 1,
+			"schema": {
+				"type": "string",
+				"contentEncoding": "binary",
+				"contentMediaType": "application/enforce-cs4-playas-data"
+			}
+		}
+	},
+	"outputs": {
+		"playasOutput": {
+			"schema": {
+				"type": "string",
+				"contentEncoding": "binary",
+				"contentMediaType": "application/enforce-cs4-playas-data"
+			}
+		}
+	},
+	"links": [
+		{
+			"href": "%API_URL%/geocode-playas/execution",
+			"rel": "http://www.opengis.net/def/rel/ogc/1.0/execute",
+			"title": "Execute endpoint"
+		},
+		{
+			"href": "https://www.opengis.net/def/profile/OGC/0/ogc-process-description",
+			"rel": "profile"
+		}
+	]
+}

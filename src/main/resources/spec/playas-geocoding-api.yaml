@@ -1,0 +1,233 @@
+openapi: 3.0.0
+info:
+   version: '2.0rc1'
+   title: "ENFORCE Playas Geocoding API"
+   description: |-
+      Adds missing and fixes incorrect location information for data coming from the Manorba App used to report beach cleaning around Barcelona
+   contact:
+      name: Benjamin Pross
+      email: b.pross @52north.org
+   license:
+      name: Apache License
+      url: https://raw.githubusercontent.com/enforceproject-eu/playas-geocoding-api/refs/heads/main/LICENSE
+servers:
+  - description: |-
+       52°North demo server
+    url: https://enforce.dev.52north.org/playas-geocoding-api/
+paths:
+   # OGC API - Common - Part 1: Core
+   /:
+      $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/paths/common-core/pLandingPage.yaml'
+   /conformance:
+      $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/paths/common-core/pConformance.yaml'
+   /api:
+      $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/paths/common-core/pAPI.yaml'
+
+   # OGC API - Processes - Part 1: Core
+   /processes:
+      # If OGC API - Part 1 only uncomment the line below
+      $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/paths/processes-core/pProcessList.yaml'
+
+   /processes/geocode-playas:
+      # OGC API - Processes Part 1: Core
+      get:
+          summary: retrieve a process description
+          description:  |
+             The process description contains information about inputs and outputs and a link to the execution-endpoint for the process. The Core does not mandate the use of a specific process description to specify the interface of a process. That said, the Core requirements class makes the following recommendation:
+          
+             Implementations SHOULD consider supporting the OGC process description.
+          
+             For more information, see [Section 7.8](https://docs.ogc.org/is/18-062r2/18-062r2.html#sc_process_description).
+          operationId: getProcessDescription
+          tags:
+            - Processes
+            - Core
+          responses:
+            200:
+              $ref: "https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/responses/processes-core/rProcessDescription.yaml"
+            404:
+              $ref: "https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/responses/common-core/rNotFound.yaml"
+
+   /processes/geocode-playas/execution:
+      post:
+         summary: execute a process.
+         description: |
+           Executes a process (this may result in the creation of a job resource e.g., for _asynchronous execution_).
+      
+           For more information, see [Section 7.9](https://docs.ogc.org/is/18-062r2/18-062r2.html#sc_create_job).
+         operationId: execute
+         tags:
+           - Processes
+           - Core
+         parameters:
+           - $ref: "https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/parameters/processes-core/response.yaml"
+           - $ref: "https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/parameters/processes-core/prefer-header-execution.yaml"
+         requestBody:
+           description: An execution request specifying any inputs for the process to execute, and optionally to select specific outputs.
+           required: true
+           content:
+             application/json:
+               schema:
+                 $ref: "https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/processes-core/execute.yaml"
+         responses:
+           200:
+             $ref: "https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/responses/processes-core/rExecuteSync.yaml"
+           404:
+             $ref: "https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/responses/common-core/rNotFound.yaml"
+           500:
+             $ref: "https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/responses/common-core/rServerError.yaml"
+
+components:
+   schemas:
+      # $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/./schemas/index.yaml' # Not supported?
+      # https://davidgarcia.dev/posts/how-to-split-open-api-spec-into-multiple-files/ vs.
+      # https://stackoverflow.com/questions/64940379/ref-ing-multiple-files-at-the-components-schemas-top-level-in-openapi-3
+
+      # Common - Core
+      confClasses:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/common-core/confClasses.yaml'
+      link:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/common-core/link.yaml'
+      landingPage:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/common-core/landingPage.yaml'
+      exception:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/common-core/exception.yaml'
+
+      # Common - Geospatial Data
+      extent:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/common-geodata/extent.yaml'
+      extent-UAD:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/common-geodata/extent-UAD.yaml'
+      crs:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/crs/crs.yaml'
+      dataType:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/common-geodata/dataType.yaml'
+      timeStamp:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/common-geodata/timeStamp.yaml'
+      numberReturned:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/common-geodata/numberReturned.yaml'
+      numberMatched:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/common-geodata/numberMatched.yaml'
+
+      # Processes - Core
+      processSummary:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/processes-core/processSummary.yaml'
+      process:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/processes-core/process.yaml'
+      processList:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/processes-core/processList.yaml'
+      descriptionType:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/processes-core/descriptionType.yaml'
+      binaryValue:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/processes-core/binaryValue.yaml'
+      execute:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/processes-core/execute.yaml'
+      format:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/processes-core/format.yaml'
+      schemaAndOccurrences:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/processes-core/schemaAndOccurrences.yaml'
+      inputDescription:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/processes-core/inputDescription.yaml'
+      value:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/processes-core/value.yaml'
+      valueNoObject:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/processes-core/valueNoObject.yaml'
+      jobControlOptions:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/processes-core/jobControlOptions.yaml'
+      metadata:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/processes-core/metadata.yaml'
+      values:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/processes-core/values.yaml'
+      outputSelection:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/processes-core/outputSelection.yaml'
+      outputDescription:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/processes-core/outputDescription.yaml'
+      qualifiedValue:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/processes-core/qualifiedValue.yaml'
+      reference:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/processes-core/reference.yaml'
+      results:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/processes-core/results.yaml'
+      schema:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/processes-core/schema.yaml'
+      statusCode:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/processes-core/statusCode.yaml'
+      inlineOrRefValue:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/processes-core/inlineOrRefValue.yaml'
+      fieldsModifiers:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/processes-core/fieldsModifiers.yaml'
+      dataAccessAPIs:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/processes-core/dataAccessAPIs.yaml'
+      apis:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/processes-core/apis.yaml'
+      dataClasses:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/schemas/processes-core/dataClasses.yaml'
+
+   parameters:
+      # Common - Core
+      f-metadata:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/parameters/unspecified/f-metadata.yaml'
+
+      # Common - Geospatial data
+      datetime:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/parameters/common-geodata/datetime.yaml'
+
+      # Common - CRS
+      crs:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/parameters/common-crs/crs.yaml'
+      subset-crs:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/parameters/common-crs/subset-crs.yaml'
+
+      # Processes - Core (2.0)
+      outputID:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/parameters/processes-core/outputID.yaml'
+      # Processes - Core (2.0)
+      N:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/parameters/processes-core/N.yaml'
+      
+      # Processes - Core (Jobs)
+      jobID:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/parameters/processes-core/jobID.yaml'
+
+   responses:
+      # Generic Errors
+      NotFound:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/responses/common-core/rNotFound.yaml'
+      NotAcceptable:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/responses/common-core/rNotAcceptable.yaml'
+      ServerError:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/responses/common-core/rServerError.yaml'
+      InvalidParameter:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/responses/common-core/rInvalidParameter.yaml'
+      NotAllowed:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/responses/common-core/rNotAllowed.yaml'
+      Exception:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/responses/common-core/rException.yaml'
+
+      # Common - Core
+      LandingPage:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/responses/common-core/rLandingPage.yaml'
+      Conformance:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/responses/common-core/rConformance.yaml'
+      API:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/responses/common-core/rAPI.yaml'
+
+      # OGC API - Processes - Part 1: Core
+      ProcessList:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/responses/processes-core/rProcessList.yaml'
+
+      ProcessDescription:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/responses/processes-core/rProcessDescription.yaml'
+
+      Results:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/responses/processes-core/rResults.yaml'
+      Output:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/responses/processes-core/rOutput.yaml'
+      OutputValue:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/responses/processes-core/rOutputValue.yaml'
+      ExecuteSync:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/responses/processes-core/rExecuteSync.yaml'
+      ExecuteSyncRawRef:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/responses/processes-core/rExecuteSyncRawRef.yaml'
+      EmptyResponse:
+         $ref: 'https://raw.githubusercontent.com/opengeospatial/ogcapi-processes/refs/heads/master/openapi/responses/processes-core/rEmpty.yaml'

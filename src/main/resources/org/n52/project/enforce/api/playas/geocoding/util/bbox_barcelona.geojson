@@ -1,0 +1,7 @@
+{
+"type": "FeatureCollection",
+"name": "bbox_barcelona",
+"features": [
+{ "type": "Feature", "properties": { "id": 0 }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ 1.6461615, 41.1852058 ], [ 1.6461615, 41.651509 ], [ 2.753699, 41.651509 ], [ 2.753699, 41.1852058 ], [ 1.6461615, 41.1852058 ] ] ] ] } }
+]
+}
